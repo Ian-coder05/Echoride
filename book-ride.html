@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book a Ride - EcoRide</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">EcoRide</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="logout.html">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <section class="py-5 bg-light">
+    <div class="container">
+      <h2 class="text-center mb-4">Book Your EcoRide</h2>
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <form action="php/book_ride.php" method="POST" class="card shadow-sm p-4 bg-white">
+            <div class="mb-3">
+              <label for="pickup" class="form-label">Pickup Location</label>
+              <input type="text" class="form-control" id="pickup" name="pickup" required />
+            </div>
+            <div class="mb-3">
+              <label for="dropoff" class="form-label">Drop-off Location</label>
+              <input type="text" class="form-control" id="dropoff" name="dropoff" required />
+            </div>
+            <div class="mb-3">
+              <label for="ride_time" class="form-label">Ride Time</label>
+              <input type="datetime-local" class="form-control" id="ride_time" name="ride_time" required />
+            </div>
+            <button type="submit" class="btn btn-success w-100">Book Ride</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="mt-auto text-center py-3 bg-dark text-white">
+    &copy; 2025 EcoRide. All rights reserved.
+  </footer>
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Signup - EcoRide</title>
+  <link rel="stylesheet" href="/styles.css"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+</head>
+<header>
+  <nav>
+    <div class="logo">Eco-Ride</div>
+    <ul>
+      <li><a href="/index.html"class="active">Home</a></li>
+      <li><a href="/aboutus.html" >About</a></li>
+      <li><a href="/contactus.html">Contact</a></li>
+      <li class="nav-item"><a class="btn btn-outline-success ms-2" href="/login.html">Login</a></li>
+      <li class="nav-item"><a class="btn btn-success text-white ms-2" href="/signup.html">Sign Up</a></li>
+  </ul>
+  </nav>
+</header>
+<body class="d-flex flex-column min-vh-100">
+
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h2 class="text-center mb-4">Create Your EcoRide Account</h2>
+        <form action="php/signup.php" method="POST" id="signupForm" class="card p-4 shadow-sm">
+          <div class="mb-3">
+            <label for="fullname" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" required />
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email" required />
+          </div>
+          <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" class="form-control" id="password" name="password" required />
+            <div id="password-strength" class="small text-muted mt-1"></div>
+          </div>
+          <div class="mb-3">
+            <label for="confirm_password" class="form-label">Confirm Password</label>
+            <input type="password" class="form-control" id="confirm_password" required />
+          </div>
+          <button type="submit" class="btn btn-success w-100">Sign Up</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-auto text-center text-muted py-3 bg-dark text-white">
+    &copy; 2025 EcoRide. All rights reserved.
+  </footer>
+
+  <script>
+    const passwordInput = document.getElementById('password');
+    const strengthText = document.getElementById('password-strength');
+
+    passwordInput.addEventListener('input', () => {
+      const value = passwordInput.value;
+      let strength = 'Weak';
+      if (value.length >= 8 && /[A-Z]/.test(value) && /\d/.test(value)) {
+        strength = 'Strong';
+      } else if (value.length >= 6) {
+        strength = 'Moderate';
+      }
+      strengthText.textContent = `Password strength: ${strength}`;
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      const pw = passwordInput.value;
+      const confirm = document.getElementById('confirm_password').value;
+      if (pw !== confirm) {
+        e.preventDefault();
+        alert("Passwords do not match!");
+      }
+    });
+  </script>
+  <footer class="mt-auto text-center py-3 bg-dark text-white">
+    &copy; 2025 EcoRide. All rights reserved.
+  </footer>
+  
+</body>
+</html>
