@@ -16,9 +16,14 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="book-ride.html">Book Ride</a></li>
-          <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="logout.php">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="aboutus.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contactus.html">Contact</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="book-ride.html">Book Ride</a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="login.html">Login</a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="signup.html">Sign Up</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="logout.php">Logout</a></li>
         </ul>
       </div>
     </div>
@@ -41,29 +46,53 @@
         .then(res => res.json())
         .then(data => {
           const rideList = document.getElementById('rideList');
-          rideList.innerHTML = data.map(ride => `
-            <div class="col-md-6">
-              <div class="card mb-4 shadow-sm hover-card">
-                <div class="card-body">
-                  <h5 class="card-title">${ride.pickup} ➔ ${ride.dropoff}</h5>
-                  <p class="card-text">
-                    <strong>Start:</strong> ${ride.ride_time}<br>
-                    <strong>End:</strong> ${ride.end_time}<br>
-                    <strong>Duration:</strong> ${ride.duration}<br>
-                    <strong>Cost:</strong> ${ride.cost}<br>
-                    <strong>Status:</strong> ${ride.status}
-                  </p>
+          if (data.length === 0) {
+            rideList.innerHTML = `
+              <div class="col-12">
+                <div class="card text-center shadow-sm p-4">
+                  <div class="card-body">
+                    <h4 class="card-title text-muted">No Rides Booked Yet</h4>
+                    <p class="card-text">You haven't booked any rides yet. Click below to book your first EcoRide!</p>
+                    <a href="book-ride.html" class="btn btn-success">Book a Ride</a>
+                  </div>
                 </div>
               </div>
-            </div>
-          `).join('');
+            `;
+          } else {
+            rideList.innerHTML = data.map(ride => `
+              <div class="col-md-6">
+                <div class="card mb-4 shadow-sm hover-card">
+                  <div class="card-body">
+                    <h5 class="card-title">${ride.pickup} ➔ ${ride.dropoff}</h5>
+                    <p class="card-text">
+                      <strong>Start:</strong> ${ride.ride_time}<br>
+                      <strong>End:</strong> ${ride.end_time}<br>
+                      <strong>Duration:</strong> ${ride.duration}<br>
+                      <strong>Cost:</strong> ${ride.cost}<br>
+                      <strong>Status:</strong> ${ride.status}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            `).join('');
+          }
         });
     });
     
+    document.addEventListener('DOMContentLoaded', function() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      document.querySelectorAll('.logged-in-only').forEach(el => {
+        el.style.display = isLoggedIn ? '' : 'none';
+      });
+      document.querySelectorAll('.logged-out-only').forEach(el => {
+        el.style.display = isLoggedIn ? 'none' : '';
+      });
+    });
   </script>
-<footer class="mt-auto text-center py-3 bg-dark text-white">
-  &copy; 2025 EcoRide. All rights reserved.
-</footer>
+
+  <footer class="mt-auto text-center py-3 bg-dark text-white">
+    &copy; 2025 EcoRide. All rights reserved.
+  </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

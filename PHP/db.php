@@ -2,7 +2,7 @@
 $host = "localhost";
 $user = "root";
 $password = "";
-$db = "eco_ride";
+$db = "echo_ride";
 
 $conn = mysqli_connect($host, $user, $password, $db);
 

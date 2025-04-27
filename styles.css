@@ -6,7 +6,7 @@ body {
 }
 
 .page-header {
-  background: url('../images/eco-bg.jpg') no-repeat center center/cover;
+  /* background: url('../images/eco-bg.jpg') no-repeat center center/cover; */
   color: white;
   padding: 100px 0;
   text-align: center;

@@ -18,7 +18,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (password_verify($password, $hashed_password)) {
             $_SESSION['user_id'] = $id;
             $_SESSION['user_name'] = $name;
-            header("Location: ../dashboard.html");
+            
+            // Set localStorage status through JavaScript
+            echo "<script>
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userName', '" . addslashes($name) . "');
+                window.location.href = '../dashboard.html';
+            </script>";
             exit;
         } else {
             echo "Incorrect password.";
