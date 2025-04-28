@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EchoRide Messages</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    .message-unread {
+      font-weight: bold;
+      background-color: rgba(13, 110, 253, 0.1);
+    }
+    .message-card {
+      transition: all 0.3s ease;
+    }
+    .message-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .badge-counter {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      font-size: 0.6rem;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">EchoRide</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="aboutus.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contactus.html">Contact</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="book-ride.html">Book Ride</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link active" href="messages.html">Messages <span id="unreadBadge" class="badge bg-danger rounded-pill d-none">0</span></a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="login.html">Login</a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="signup.html">Sign Up</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="logout.php">Logout</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <div class="row">
+      <div class="col-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+          <h2>My Messages</h2>
+          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#composeMessageModal">
+            <i class="bi bi-pencil-square"></i> New Message
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Filters -->
+    <div class="row mb-4">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <select class="form-select" id="statusFilter">
+                  <option value="">All Messages</option>
+                  <option value="unread">Unread</option>
+                  <option value="read">Read</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" id="typeFilter">
+                  <option value="">All Types</option>
+                  <option value="support">Support</option>
+                  <option value="notification">Notifications</option>
+                  <option value="inquiry">Inquiries</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <button class="btn btn-primary w-100" id="applyFilters">Apply Filters</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message List -->
+    <div class="row" id="messageList">
+      <!-- Messages will be loaded here -->
+      <div class="col-12 text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compose Message Modal -->
+  <div class="modal fade" id="composeMessageModal" tabindex="-1" aria-labelledby="composeMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="composeMessageModalLabel">Compose New Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="composeMessageForm">
+            <div class="mb-3">
+              <label for="messageType" class="form-label">Message Type</label>
+              <select class="form-select" id="messageType" name="message_type" required>
+                <option value="">Select type</option>
+                <option value="support">Support</option>
+                <option value="inquiry">Inquiry</option>
+                <option value="feedback">Feedback</option>
+                <option value="complaint">Complaint</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="messageSubject" class="form-label">Subject</label>
+              <input type="text" class="form-control" id="messageSubject" name="subject" required>
+            </div>
+            <div class="mb-3">
+              <label for="messageContent" class="form-label">Message</label>
+              <textarea class="form-control" id="messageContent" name="content" rows="5" required></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="sendMessage">Send Message</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- View Message Modal -->
+  <div class="modal fade" id="viewMessageModal" tabindex="-1" aria-labelledby="viewMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="viewMessageModalLabel">Message Details</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <strong>From:</strong> <span id="detailFrom"></span>
+            </div>
+            <div class="col-md-6">
+              <strong>Date:</strong> <span id="detailDate"></span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <strong>Type:</strong> <span id="detailType"></span>
+            </div>
+            <div class="col-md-6">
+              <strong>Status:</strong> <span id="detailStatus"></span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <strong>Subject:</strong> <span id="detailSubject"></span>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <strong>Message:</strong>
+              <div class="p-3 bg-light rounded mt-2" id="detailContent"></div>
+            </div>
+          </div>
+          
+          <!-- Message Thread -->
+          <div id="messageThread" class="mt-4 d-none">
+            <h6>Previous Messages</h6>
+            <div id="threadMessages" class="border-start border-3 ps-3"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary" id="replyMessage">Reply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reply Message Modal -->
+  <div class="modal fade" id="replyMessageModal" tabindex="-1" aria-labelledby="replyMessageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="replyMessageModalLabel">Reply to Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="replyMessageForm">
+            <input type="hidden" id="replyToId" name="reply_to_id">
+            <input type="hidden" id="replyRecipientId" name="recipient_id">
+            <div class="mb-3">
+              <label for="replySubject" class="form-label">Subject</label>
+              <input type="text" class="form-control" id="replySubject" name="subject" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="replyContent" class="form-label">Message</label>
+              <textarea class="form-control" id="replyContent" name="content" rows="5" required></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="sendReply">Send Reply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="text-center text-muted py-4 bg-dark text-white mt-5">
+    <p class="mb-0">&copy; 2025 EchoRide. All rights reserved.</p>
+  </footer>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/messages.js"></script>
+</body>
+</html>

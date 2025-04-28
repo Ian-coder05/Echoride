@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoRide Admin - Payments</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>EchoRide Admin</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="index.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="vehicles.html"><i class="bi bi-bicycle"></i> Vehicles</a>
+                </li>
+                <li>
+                    <a href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li>
+                    <a href="rides.html"><i class="bi bi-map"></i> Rides</a>
+                </li>
+                <li>
+                    <a href="maintenance.html"><i class="bi bi-tools"></i> Maintenance</a>
+                </li>
+                <li class="active">
+                    <a href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+                <li>
+                    <a href="messages.html"><i class="bi bi-envelope"></i> Messages</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="ml-auto">
+                        <a href="../php/logout.php" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Payments Management</h2>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPaymentModal">
+                                <i class="bi bi-plus-circle"></i> Add Payment
+                            </button>
+                        </div>
+
+                        <!-- Payment Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Payments</h5>
+                                        <h2 id="totalPayments">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Completed</h5>
+                                        <h2 id="completedPayments">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Pending</h5>
+                                        <h2 id="pendingPayments">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-danger text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Failed</h5>
+                                        <h2 id="failedPayments">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filters -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Status</label>
+                                        <select class="form-select" id="statusFilter">
+                                            <option value="">All Statuses</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="pending">Pending</option>
+                                            <option value="failed">Failed</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Payment Method</label>
+                                        <select class="form-select" id="methodFilter">
+                                            <option value="">All Methods</option>
+                                            <option value="credit_card">Credit Card</option>
+                                            <option value="mpesa">M-Pesa</option>
+                                            <option value="paypal">PayPal</option>
+                                            <option value="bank_transfer">Bank Transfer</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Search</label>
+                                        <input type="text" class="form-control" id="searchInput" placeholder="Search by reference or user...">
+                                    </div>
+                                    <div class="col-md-2 d-flex align-items-end">
+                                        <button class="btn btn-secondary w-100" id="applyFilters">Apply Filters</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Payments Table -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="paymentsTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>Transaction ID</th>
+                                                <th>User</th>
+                                                <th>Amount</th>
+                                                <th>Method</th>
+                                                <th>Status</th>
+                                                <th>Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Payment Modal -->
+    <div class="modal fade" id="addPaymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Payment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addPaymentForm">
+                        <div class="mb-3">
+                            <label class="form-label">User</label>
+                            <select class="form-select" name="user_id" required>
+                                <option value="">Select user</option>
+                                <!-- Populated by JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Ride ID</label>
+                            <select class="form-select" name="ride_id" required>
+                                <option value="3">Ride #3</option>
+                                <option value="4">Ride #4</option>
+                                <option value="5">Ride #5</option>
+                                <option value="6">Ride #6</option>
+                                <option value="7">Ride #7</option>
+                            </select>
+                            <small class="text-muted">Select a ride from the available options</small>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Amount (KES)</label>
+                            <input type="number" step="0.01" class="form-control" name="amount" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Payment Method</label>
+                            <select class="form-select" name="payment_method" required>
+                                <option value="">Select method</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="mpesa">M-Pesa</option>
+                                <option value="paypal">PayPal</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+                            <select class="form-select" name="payment_status" required>
+                                <option value="">Select status</option>
+                                <option value="completed">Completed</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Transaction ID</label>
+                            <input type="text" class="form-control" name="transaction_id" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="savePayment">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Payment Details Modal -->
+    <div class="modal fade" id="paymentDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Payment Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>Payment Information</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Transaction ID:</label>
+                                <p id="detailTransactionId" class="form-control-static"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">User:</label>
+                                <p id="detailUser" class="form-control-static"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Amount:</label>
+                                <p id="detailAmount" class="form-control-static"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Transaction Details</h6>
+                            <div class="mb-3">
+                                <label class="form-label">Method:</label>
+                                <p id="detailMethod" class="form-control-static"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Status:</label>
+                                <p id="detailStatus" class="form-control-static"></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Date:</label>
+                                <p id="detailDate" class="form-control-static"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Notes</h6>
+                            <div id="detailNotes" class="p-3 bg-light rounded"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/payments.js"></script>
+</body>
+</html>

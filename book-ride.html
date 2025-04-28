@@ -3,23 +3,92 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Book a Ride - EcoRide</title>
+  <title>Book a Ride - EchoRide</title>
   <link rel="stylesheet" href="styles.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    .vehicle-card {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    .vehicle-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .vehicle-card.selected {
+      border-color: #28a745;
+      background-color: rgba(40, 167, 69, 0.1);
+    }
+    .form-section {
+      display: none;
+    }
+    .form-section.active {
+      display: block;
+    }
+    .step-indicator {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    .step {
+      flex: 1;
+      text-align: center;
+      padding: 10px;
+      position: relative;
+    }
+    .step:not(:last-child):after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -10%;
+      width: 20%;
+      height: 2px;
+      background-color: #dee2e6;
+    }
+    .step.active {
+      font-weight: bold;
+      color: #28a745;
+    }
+    .step.active:not(:last-child):after {
+      background-color: #28a745;
+    }
+    .step.completed {
+      color: #28a745;
+    }
+    .step.completed:not(:last-child):after {
+      background-color: #28a745;
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="index.html">EcoRide</a>
+      <a class="navbar-brand" href="index.html">EchoRide</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
           <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
-          <li class="nav-item"><a class="nav-link" href="logout.html">Logout</a></li>
+          <li class="nav-item"><a class="nav-link" href="aboutus.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contactus.html">Contact</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link active" href="book-ride.html">Book Ride</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="messages.html">Messages <span id="unreadBadge" class="badge bg-danger rounded-pill d-none">0</span></a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="login.html">Login</a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="signup.html">Sign Up</a></li>
+          <li class="nav-item logged-in-only dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="navUsername">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person"></i> My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+          </li>
         </ul>
       </div>
     </div>
@@ -27,33 +96,174 @@
 
   <section class="py-5 bg-light">
     <div class="container">
-      <h2 class="text-center mb-4">Book Your EcoRide</h2>
-      <div class="row justify-content-center">
-        <div class="col-md-6">
-          <form action="php/book_ride.php" method="POST" class="card shadow-sm p-4 bg-white">
-            <div class="mb-3">
-              <label for="pickup" class="form-label">Pickup Location</label>
-              <input type="text" class="form-control" id="pickup" name="pickup" required />
+      <h2 class="text-center mb-4">Book Your EchoRide</h2>
+      
+      <!-- Alert Container -->
+      <div id="alertContainer" class="mb-4"></div>
+      
+      <!-- Step Indicator -->
+      <div class="step-indicator">
+        <div class="step active" id="step1">1. Select Vehicle</div>
+        <div class="step" id="step2">2. Ride Details</div>
+        <div class="step" id="step3">3. Confirm Booking</div>
+      </div>
+      
+      <form id="bookRideForm" class="card shadow-sm p-4 bg-white">
+        <!-- Step 1: Vehicle Selection -->
+        <div class="form-section active" id="vehicleSection">
+          <h4 class="mb-3">Select a Vehicle</h4>
+          <div class="row" id="vehicleList">
+            <div class="col-12 text-center py-5">
+              <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="dropoff" class="form-label">Drop-off Location</label>
-              <input type="text" class="form-control" id="dropoff" name="dropoff" required />
+          </div>
+          <div class="d-flex justify-content-end mt-3">
+            <button type="button" class="btn btn-primary" id="nextToDetails">Next <i class="bi bi-arrow-right"></i></button>
+          </div>
+        </div>
+        
+        <!-- Step 2: Ride Details -->
+        <div class="form-section" id="detailsSection">
+          <h4 class="mb-3">Ride Details</h4>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="pickup" class="form-label">Pickup Location</label>
+                <input type="text" class="form-control" id="pickup" name="pickup" required />
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="ride_time" class="form-label">Ride Time</label>
-              <input type="datetime-local" class="form-control" id="ride_time" name="ride_time" required />
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="dropoff" class="form-label">Drop-off Location</label>
+                <input type="text" class="form-control" id="dropoff" name="dropoff" required />
+              </div>
             </div>
-            <button type="submit" class="btn btn-success w-100">Book Ride</button>
-          </form>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="ride_date" class="form-label">Ride Date</label>
+                <input type="date" class="form-control" id="ride_date" name="ride_date" required />
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="ride_time" class="form-label">Ride Time</label>
+                <input type="time" class="form-control" id="ride_time" name="ride_time" required />
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="notes" class="form-label">Special Instructions (Optional)</label>
+            <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+          </div>
+          
+          <div class="d-flex justify-content-between mt-3">
+            <button type="button" class="btn btn-secondary" id="backToVehicles"><i class="bi bi-arrow-left"></i> Back</button>
+            <button type="button" class="btn btn-primary" id="nextToConfirm">Next <i class="bi bi-arrow-right"></i></button>
+          </div>
+        </div>
+        
+        <!-- Step 3: Confirmation -->
+        <div class="form-section" id="confirmSection">
+          <h4 class="mb-3">Confirm Your Booking</h4>
+          
+          <div class="card mb-4">
+            <div class="card-header bg-light">
+              <h5 class="mb-0">Booking Summary</h5>
+            </div>
+            <div class="card-body">
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Vehicle:</div>
+                <div class="col-md-8" id="summaryVehicle"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Pickup:</div>
+                <div class="col-md-8" id="summaryPickup"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Drop-off:</div>
+                <div class="col-md-8" id="summaryDropoff"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Date & Time:</div>
+                <div class="col-md-8" id="summaryDateTime"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Estimated Distance:</div>
+                <div class="col-md-8" id="summaryDistance"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Carbon Saved:</div>
+                <div class="col-md-8" id="summaryCarbonSaved"></div>
+              </div>
+              <div class="row mb-2">
+                <div class="col-md-4 fw-bold">Battery Usage:</div>
+                <div class="col-md-8" id="summaryBatteryUsage"></div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" id="termsCheck" required>
+            <label class="form-check-label" for="termsCheck">
+              I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">terms and conditions</a>
+            </label>
+          </div>
+          
+          <div class="d-flex justify-content-between mt-3">
+            <button type="button" class="btn btn-secondary" id="backToDetails"><i class="bi bi-arrow-left"></i> Back</button>
+            <button type="submit" class="btn btn-success" id="confirmBooking"><i class="bi bi-check-circle"></i> Confirm Booking</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </section>
+  
+  <!-- Terms and Conditions Modal -->
+  <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="termsModalLabel">Terms and Conditions</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <h6>Booking Terms</h6>
+          <p>By booking a ride with EchoRide, you agree to the following terms and conditions:</p>
+          <ul>
+            <li>You must be at the pickup location at the scheduled time.</li>
+            <li>Cancellations within 1 hour of the scheduled ride may incur a fee.</li>
+            <li>Payment will be processed upon completion of the ride.</li>
+            <li>EchoRide is not responsible for delays caused by traffic or weather conditions.</li>
+            <li>You agree to treat the vehicle and driver with respect.</li>
+          </ul>
+          
+          <h6>Privacy Policy</h6>
+          <p>EchoRide collects and processes personal data in accordance with our privacy policy. This includes:</p>
+          <ul>
+            <li>Contact information for booking and communication purposes.</li>
+            <li>Location data for ride coordination.</li>
+            <li>Payment information for processing transactions.</li>
+          </ul>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-bs-dismiss="modal">I Understand</button>
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
   <footer class="mt-auto text-center py-3 bg-dark text-white">
-    &copy; 2025 EcoRide. All rights reserved.
+    &copy; 2025 EchoRide. All rights reserved.
   </footer>
   
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/book-ride.js"></script>
 </body>
 </html>

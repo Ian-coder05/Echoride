@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoRide Admin - Rides</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/admin-styles.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>EchoRide Admin</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="index.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="vehicles.html"><i class="bi bi-bicycle"></i> Vehicles</a>
+                </li>
+                <li>
+                    <a href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li class="active">
+                    <a href="rides.html"><i class="bi bi-map"></i> Rides</a>
+                </li>
+                <li>
+                    <a href="maintenance.html"><i class="bi bi-tools"></i> Maintenance</a>
+                </li>
+                <li>
+                    <a href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+                <li>
+                    <a href="messages.html"><i class="bi bi-envelope"></i> Messages</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="ml-auto">
+                        <a href="../php/logout.php" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h2>Ride Management</h2>
+                        
+                        <!-- Ride Statistics -->
+                        <div class="row mb-4">
+                            <div class="col-md-3">
+                                <div class="card bg-primary text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Rides</h5>
+                                        <h2 id="totalRides">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-success text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Active Rides</h5>
+                                        <h2 id="activeRides">0</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-info text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Total Distance</h5>
+                                        <h2 id="totalDistance">0 km</h2>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card bg-warning text-white">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Carbon Saved</h5>
+                                        <h2 id="carbonSaved">0 kg</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Filters -->
+                        <div class="card mb-4">
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="statusFilter">
+                                            <option value="">All Statuses</option>
+                                            <option value="ongoing">Ongoing</option>
+                                            <option value="completed">Completed</option>
+                                            <option value="cancelled">Cancelled</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="vehicleTypeFilter">
+                                            <option value="">All Vehicle Types</option>
+                                            <option value="scooter">Scooter</option>
+                                            <option value="bike">Bike</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="searchInput" placeholder="Search by user or location...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-secondary w-100" id="applyFilters">Apply Filters</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Rides Table -->
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-hover" id="ridesTable">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>User</th>
+                                                <th>Vehicle</th>
+                                                <th>Pickup</th>
+                                                <th>Dropoff</th>
+                                                <th>Distance</th>
+                                                <th>Carbon Saved</th>
+                                                <th>Start Time</th>
+                                                <th>End Time</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Populated by JavaScript -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Ride Details Modal -->
+    <div class="modal fade" id="rideDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Ride Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6>User Information</h6>
+                            <table class="table">
+                                <tr>
+                                    <th>Name:</th>
+                                    <td id="rideUserName"></td>
+                                </tr>
+                                <tr>
+                                    <th>Email:</th>
+                                    <td id="rideUserEmail"></td>
+                                </tr>
+                                <tr>
+                                    <th>Total Rides:</th>
+                                    <td id="rideUserTotalRides"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Vehicle Information</h6>
+                            <table class="table">
+                                <tr>
+                                    <th>Type:</th>
+                                    <td id="rideVehicleType"></td>
+                                </tr>
+                                <tr>
+                                    <th>Model:</th>
+                                    <td id="rideVehicleModel"></td>
+                                </tr>
+                                <tr>
+                                    <th>Battery Level:</th>
+                                    <td id="rideVehicleBattery"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <h6>Ride Information</h6>
+                            <table class="table">
+                                <tr>
+                                    <th>Pickup Location:</th>
+                                    <td id="ridePickup"></td>
+                                </tr>
+                                <tr>
+                                    <th>Dropoff Location:</th>
+                                    <td id="rideDropoff"></td>
+                                </tr>
+                                <tr>
+                                    <th>Distance:</th>
+                                    <td id="rideDistance"></td>
+                                </tr>
+                                <tr>
+                                    <th>Carbon Saved:</th>
+                                    <td id="rideCarbonSaved"></td>
+                                </tr>
+                                <tr>
+                                    <th>Duration:</th>
+                                    <td id="rideDuration"></td>
+                                </tr>
+                                <tr>
+                                    <th>Cost:</th>
+                                    <td id="rideCost"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/rides.js"></script>
+</body>
+</html>

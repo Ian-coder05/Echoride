@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EchoRide Admin - Messages</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/admin-styles.css">
+    <style>
+        .message-unread {
+            font-weight: bold;
+            background-color: rgba(13, 110, 253, 0.1);
+        }
+        .card-counter {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            padding: 20px 10px;
+            background-color: #fff;
+            height: 100px;
+            border-radius: 5px;
+            transition: .3s linear all;
+        }
+        .card-counter i {
+            font-size: 4em;
+            opacity: 0.5;
+        }
+        .card-counter .count-numbers {
+            position: absolute;
+            right: 35px;
+            top: 20px;
+            font-size: 32px;
+            display: block;
+        }
+        .card-counter .count-name {
+            position: absolute;
+            right: 35px;
+            top: 65px;
+            font-style: italic;
+            text-transform: capitalize;
+            opacity: 0.5;
+            display: block;
+            font-size: 18px;
+        }
+        .card-counter.primary {
+            background-color: #007bff;
+            color: #FFF;
+        }
+        .card-counter.success {
+            background-color: #28a745;
+            color: #FFF;
+        }
+        .card-counter.warning {
+            background-color: #ffc107;
+            color: #FFF;
+        }
+        .card-counter.danger {
+            background-color: #dc3545;
+            color: #FFF;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>EchoRide Admin</h3>
+            </div>
+
+            <ul class="list-unstyled components">
+                <li>
+                    <a href="index.html"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                </li>
+                <li>
+                    <a href="vehicles.html"><i class="bi bi-bicycle"></i> Vehicles</a>
+                </li>
+                <li>
+                    <a href="users.html"><i class="bi bi-people"></i> Users</a>
+                </li>
+                <li>
+                    <a href="rides.html"><i class="bi bi-map"></i> Rides</a>
+                </li>
+                <li>
+                    <a href="maintenance.html"><i class="bi bi-tools"></i> Maintenance</a>
+                </li>
+                <li>
+                    <a href="payments.html"><i class="bi bi-credit-card"></i> Payments</a>
+                </li>
+                <li class="active">
+                    <a href="messages.html"><i class="bi bi-envelope"></i> Messages</a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Page Content -->
+        <div id="content">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
+                <div class="container-fluid">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <div class="ml-auto">
+                        <a href="../php/logout.php" class="btn btn-danger">Logout</a>
+                    </div>
+                </div>
+            </nav>
+            
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2>Messages Management</h2>
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#composeMessageModal">
+                                <i class="bi bi-plus-circle"></i> Compose Message
+                            </button>
+                        </div>
+
+            <!-- Alert Container -->
+            <div id="alertContainer"></div>
+
+            <!-- Statistics Cards -->
+            <div class="row mt-4">
+                <div class="col-md-3">
+                    <div class="card-counter primary">
+                        <i class="bi bi-chat-dots"></i>
+                        <span class="count-numbers" id="totalMessages">0</span>
+                        <span class="count-name">Total Messages</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-counter success">
+                        <i class="bi bi-check-circle"></i>
+                        <span class="count-numbers" id="readMessages">0</span>
+                        <span class="count-name">Read Messages</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-counter warning">
+                        <i class="bi bi-envelope"></i>
+                        <span class="count-numbers" id="unreadMessages">0</span>
+                        <span class="count-name">Unread Messages</span>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card-counter danger">
+                        <i class="bi bi-flag"></i>
+                        <span class="count-numbers" id="flaggedMessages">0</span>
+                        <span class="count-name">Flagged Messages</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Actions -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Filters and Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">All Statuses</option>
+                                        <option value="read">Read</option>
+                                        <option value="unread">Unread</option>
+                                        <option value="flagged">Flagged</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-select" id="typeFilter">
+                                        <option value="">All Types</option>
+                                        <option value="support">Support</option>
+                                        <option value="feedback">Feedback</option>
+                                        <option value="complaint">Complaint</option>
+                                        <option value="inquiry">Inquiry</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Search messages...">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" id="applyFilters">Apply Filters</button>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-12 text-end">
+                                    <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#composeMessageModal">
+                                        <i class="bi bi-plus-circle me-1"></i> Compose Message
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Messages Table -->
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Messages</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>From</th>
+                                            <th>To</th>
+                                            <th>Subject</th>
+                                            <th>Type</th>
+                                            <th>Date</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="messagesTableBody">
+                                        <!-- Messages will be loaded here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Compose Message Modal -->
+    <div class="modal fade" id="composeMessageModal" tabindex="-1" aria-labelledby="composeMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="composeMessageModalLabel">Compose New Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="composeMessageForm">
+                        <div class="mb-3">
+                            <label for="recipientId" class="form-label">Recipient</label>
+                            <select class="form-select" id="recipientId" name="recipient_id" required>
+                                <option value="">Select recipient</option>
+                                <!-- Recipients will be loaded here -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="messageType" class="form-label">Message Type</label>
+                            <select class="form-select" id="messageType" name="message_type" required>
+                                <option value="">Select type</option>
+                                <option value="support">Support</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="notification">Notification</option>
+                                <option value="inquiry">Inquiry</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="messageSubject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="messageSubject" name="subject" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="messageContent" class="form-label">Message</label>
+                            <textarea class="form-control" id="messageContent" name="content" rows="5" required></textarea>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="flagMessage" name="is_flagged">
+                            <label class="form-check-label" for="flagMessage">Flag as important</label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="sendMessage">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Message Modal -->
+    <div class="modal fade" id="viewMessageModal" tabindex="-1" aria-labelledby="viewMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="viewMessageModalLabel">Message Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>From:</strong> <span id="detailFrom"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>To:</strong> <span id="detailTo"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <strong>Date:</strong> <span id="detailDate"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Type:</strong> <span id="detailType"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <strong>Subject:</strong> <span id="detailSubject"></span>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <strong>Message:</strong>
+                            <div class="p-3 bg-light rounded mt-2" id="detailContent"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="replyMessage">Reply</button>
+                    <button type="button" class="btn btn-warning" id="toggleFlag">Flag/Unflag</button>
+                    <button type="button" class="btn btn-success" id="markAsRead">Mark as Read</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reply Message Modal -->
+    <div class="modal fade" id="replyMessageModal" tabindex="-1" aria-labelledby="replyMessageModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="replyMessageModalLabel">Reply to Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="replyMessageForm">
+                        <input type="hidden" id="replyToId" name="reply_to_id">
+                        <input type="hidden" id="replyRecipientId" name="recipient_id">
+                        <div class="mb-3">
+                            <label for="replySubject" class="form-label">Subject</label>
+                            <input type="text" class="form-control" id="replySubject" name="subject" readonly>
+                        </div>
+                        <div class="mb-3">
+                            <label for="replyContent" class="form-label">Message</label>
+                            <textarea class="form-control" id="replyContent" name="content" rows="5" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="sendReply">Send Reply</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Custom JS -->
+    <script src="js/messages.js"></script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - EchoRide</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <style>
+    .profile-header {
+      background-color: #f8f9fa;
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .profile-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: #28a745;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      margin: 0 auto 1rem;
+    }
+    .stats-card {
+      border-radius: 10px;
+      border-left: 4px solid #28a745;
+      transition: all 0.3s ease;
+    }
+    .stats-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    .form-section {
+      background-color: white;
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="index.html">EchoRide</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="aboutus.html">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="contactus.html">Contact</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="dashboard.html">Dashboard</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="book-ride.html">Book Ride</a></li>
+          <li class="nav-item logged-in-only"><a class="nav-link" href="messages.html">Messages <span id="unreadBadge" class="badge bg-danger rounded-pill d-none">0</span></a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="login.html">Login</a></li>
+          <li class="nav-item logged-out-only"><a class="nav-link" href="signup.html">Sign Up</a></li>
+          <li class="nav-item logged-in-only dropdown">
+            <a class="nav-link dropdown-toggle active" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-person-circle"></i> <span id="navUsername">User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person"></i> My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="logout.php"><i class="bi bi-box-arrow-right"></i> Logout</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container my-5">
+    <div class="profile-header text-center">
+      <div class="profile-avatar">
+        <i class="bi bi-person"></i>
+      </div>
+      <h2 id="profileFullName">Loading...</h2>
+      <p class="text-muted" id="profileEmail">loading@example.com</p>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4 mb-3">
+        <div class="card stats-card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-muted mb-1">Total Rides</h6>
+                <h3 class="mb-0" id="totalRides">0</h3>
+              </div>
+              <div class="bg-light p-3 rounded-circle">
+                <i class="bi bi-bicycle text-success" style="font-size: 1.5rem;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card stats-card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-muted mb-1">Wallet Balance</h6>
+                <h3 class="mb-0" id="walletBalance">KES 0.00</h3>
+              </div>
+              <div class="bg-light p-3 rounded-circle">
+                <i class="bi bi-wallet2 text-success" style="font-size: 1.5rem;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <div class="card stats-card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <h6 class="text-muted mb-1">Carbon Saved</h6>
+                <h3 class="mb-0" id="totalCarbon">0 kg</h3>
+              </div>
+              <div class="bg-light p-3 rounded-circle">
+                <i class="bi bi-tree-fill text-success" style="font-size: 1.5rem;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profile Information -->
+    <div class="form-section">
+      <h4 class="mb-4">Profile Information</h4>
+      <form id="profileForm">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="fullName" class="form-label">Full Name</label>
+            <input type="text" class="form-control" id="fullName" name="fullName">
+          </div>
+          <div class="col-md-6">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" readonly>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="phone" class="form-label">Phone Number</label>
+            <input type="tel" class="form-control" id="phone" name="phone">
+          </div>
+          <div class="col-md-6">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" class="form-control" id="address" name="address">
+          </div>
+        </div>
+        <div id="updateProfileAlert"></div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button type="submit" class="btn btn-success" id="updateProfileBtn">
+            <i class="bi bi-save"></i> Update Profile
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Change Password -->
+    <div class="form-section">
+      <h4 class="mb-4">Change Password</h4>
+      <form id="passwordForm">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="currentPassword" class="form-label">Current Password</label>
+            <input type="password" class="form-control" id="currentPassword" name="currentPassword" required>
+          </div>
+        </div>
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="newPassword" class="form-label">New Password</label>
+            <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+          </div>
+          <div class="col-md-6">
+            <label for="confirmPassword" class="form-label">Confirm New Password</label>
+            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+          </div>
+        </div>
+        <div id="changePasswordAlert"></div>
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+          <button type="submit" class="btn btn-primary" id="changePasswordBtn">
+            <i class="bi bi-lock"></i> Change Password
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+  <footer class="mt-auto text-center py-3 bg-dark text-white">
+    &copy; 2025 EchoRide. All rights reserved.
+  </footer>
+  
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Check login status
+      checkLoginStatus();
+      
+      // Load user profile data
+      loadProfileData();
+      
+      // Set up form submission handlers
+      document.getElementById('profileForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        updateProfile();
+      });
+      
+      document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        changePassword();
+      });
+    });
+    
+    // Check if user is logged in
+    function checkLoginStatus() {
+      fetch('php/check_login.php')
+        .then(response => response.json())
+        .then(data => {
+          if (!data.loggedIn) {
+            window.location.href = 'login.html?redirect=profile';
+          }
+        })
+        .catch(error => {
+          console.error('Error checking login status:', error);
+        });
+    }
+    
+    // Load user profile data
+    function loadProfileData() {
+      fetch('php/get_profile.php')
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            // Update profile header
+            document.getElementById('profileFullName').textContent = data.user.full_name;
+            document.getElementById('profileEmail').textContent = data.user.email;
+            document.getElementById('navUsername').textContent = data.user.full_name.split(' ')[0];
+            
+            // Update stats
+            document.getElementById('totalRides').textContent = data.user.total_rides;
+            document.getElementById('walletBalance').textContent = 'KES ' + parseFloat(data.user.wallet_balance).toFixed(2);
+            document.getElementById('totalCarbon').textContent = parseFloat(data.user.total_carbon_saved).toFixed(1) + ' kg';
+            
+            // Fill form fields
+            document.getElementById('fullName').value = data.user.full_name;
+            document.getElementById('email').value = data.user.email;
+            document.getElementById('phone').value = data.user.phone || '';
+            document.getElementById('address').value = data.user.address || '';
+          } else {
+            showToast(data.message || 'Error loading profile data', 'danger');
+          }
+        })
+        .catch(error => {
+          console.error('Error loading profile data:', error);
+          showToast('Error loading profile data. Please try again later.', 'danger');
+        });
+    }
+    
+    // Update profile information
+    function updateProfile() {
+      const fullName = document.getElementById('fullName').value;
+      const phone = document.getElementById('phone').value;
+      const address = document.getElementById('address').value;
+      
+      // Show loading state
+      const button = document.getElementById('updateProfileBtn');
+      const originalText = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+      
+      // Clear previous alerts
+      document.getElementById('updateProfileAlert').innerHTML = '';
+      
+      // Send update request
+      fetch('php/update_profile.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `full_name=${encodeURIComponent(fullName)}&phone=${encodeURIComponent(phone)}&address=${encodeURIComponent(address)}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Show success message
+          document.getElementById('updateProfileAlert').innerHTML = `
+            <div class="alert alert-success" role="alert">
+              <i class="bi bi-check-circle-fill"></i> Profile updated successfully!
+            </div>
+          `;
+          
+          // Update displayed name
+          document.getElementById('profileFullName').textContent = fullName;
+          document.getElementById('navUsername').textContent = fullName.split(' ')[0];
+          
+          showToast('Profile updated successfully!', 'success');
+        } else {
+          // Show error message
+          document.getElementById('updateProfileAlert').innerHTML = `
+            <div class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-triangle-fill"></i> ${data.message || 'Error updating profile'}
+            </div>
+          `;
+        }
+        
+        // Reset button
+        button.disabled = false;
+        button.innerHTML = originalText;
+      })
+      .catch(error => {
+        console.error('Error updating profile:', error);
+        
+        // Show error message
+        document.getElementById('updateProfileAlert').innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> Error updating profile. Please try again.
+          </div>
+        `;
+        
+        // Reset button
+        button.disabled = false;
+        button.innerHTML = originalText;
+      });
+    }
+    
+    // Change password
+    function changePassword() {
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      
+      // Validate passwords
+      if (newPassword !== confirmPassword) {
+        document.getElementById('changePasswordAlert').innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> New passwords do not match
+          </div>
+        `;
+        return;
+      }
+      
+      // Show loading state
+      const button = document.getElementById('changePasswordBtn');
+      const originalText = button.innerHTML;
+      button.disabled = true;
+      button.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Updating...';
+      
+      // Clear previous alerts
+      document.getElementById('changePasswordAlert').innerHTML = '';
+      
+      // Send update request
+      fetch('php/change_password.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: `current_password=${encodeURIComponent(currentPassword)}&new_password=${encodeURIComponent(newPassword)}`
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          // Show success message
+          document.getElementById('changePasswordAlert').innerHTML = `
+            <div class="alert alert-success" role="alert">
+              <i class="bi bi-check-circle-fill"></i> Password changed successfully!
+            </div>
+          `;
+          
+          // Reset form
+          document.getElementById('passwordForm').reset();
+          
+          showToast('Password changed successfully!', 'success');
+        } else {
+          // Show error message
+          document.getElementById('changePasswordAlert').innerHTML = `
+            <div class="alert alert-danger" role="alert">
+              <i class="bi bi-exclamation-triangle-fill"></i> ${data.message || 'Error changing password'}
+            </div>
+          `;
+        }
+        
+        // Reset button
+        button.disabled = false;
+        button.innerHTML = originalText;
+      })
+      .catch(error => {
+        console.error('Error changing password:', error);
+        
+        // Show error message
+        document.getElementById('changePasswordAlert').innerHTML = `
+          <div class="alert alert-danger" role="alert">
+            <i class="bi bi-exclamation-triangle-fill"></i> Error changing password. Please try again.
+          </div>
+        `;
+        
+        // Reset button
+        button.disabled = false;
+        button.innerHTML = originalText;
+      });
+    }
+    
+    // Show toast notification
+    function showToast(message, type = 'info') {
+      const toastId = 'toast-' + Date.now();
+      const toast = `
+        <div id="${toastId}" class="toast align-items-center text-white bg-${type} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              ${message}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('toastContainer').innerHTML += toast;
+      const toastElement = document.getElementById(toastId);
+      const bsToast = new bootstrap.Toast(toastElement);
+      bsToast.show();
+      
+      // Remove toast after it's hidden
+      toastElement.addEventListener('hidden.bs.toast', function() {
+        toastElement.remove();
+      });
+    }
+  </script>
+</body>
+</html>
